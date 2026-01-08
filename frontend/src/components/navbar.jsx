@@ -1,6 +1,4 @@
-// src/components/Navbar.jsx
-import React, { useState } from 'react';
-import './Navbar.css';
+import React, { useState } from "react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,28 +8,155 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        {/* Logo */}
-        <a href="/" className="navbar-logo">
-          Traval Buddy
-        </a>
+    <>
+      <style>{`
+        .navbar {
+          width: 100%;
+          height: 70px;
+          background-color: #ffffff;
+          border-bottom: 1px solid #e5e7eb;
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
 
-        {/* Hamburger Button (visible only on mobile) */}
-        <button className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        .navbar-container {
+          width: 100%;
+          max-width: 1200px;
+          height: 100%;
+          margin: 0 auto;
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
 
-        {/* Navigation Links */}
-        <ul className={`navbar-links ${isOpen ? 'active' : ''}`}>
-          <li><a href="/" onClick={() => setIsOpen(false)}>Home</a></li>
-          <li><a href="/customerLogin" onClick={() => setIsOpen(false)}>Login</a></li>
-          <li><a href="/customerSignup" onClick={() => setIsOpen(false)}>Signup</a></li>
-        </ul>
-      </div>
-    </nav>
+        .navbar-logo {
+          font-size: 1.6rem;
+          font-weight: 700;
+          color: #16a34a;
+          text-decoration: none;
+        }
+
+        /* Desktop Links */
+        .navbar-links {
+          display: flex;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          gap: 32px;
+        }
+
+        .navbar-links a {
+          text-decoration: none;
+          color: #1f2937;
+          font-weight: 500;
+          font-size: 1rem;
+          transition: color 0.2s;
+        }
+
+        .navbar-links a:hover {
+          color: #16a34a;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+          display: none;
+          flex-direction: column;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+        }
+
+        .hamburger span {
+          width: 25px;
+          height: 3px;
+          background-color: #333;
+          margin: 4px 0;
+          transition: 0.3s;
+          border-radius: 2px;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+          .hamburger {
+            display: flex;
+          }
+
+          .navbar-links {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          .navbar-links.active {
+            max-height: 400px;
+            padding: 20px 0;
+          }
+
+          .navbar-links a {
+            padding: 16px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+          }
+
+          .navbar-links a:hover {
+            background-color: #f3f4f6;
+          }
+        }
+      `}</style>
+
+      <nav className="navbar">
+        <div className="navbar-container">
+          {/* Logo */}
+          <a href="/" className="navbar-logo">
+            Traval Buddy
+          </a>
+
+          {/* Hamburger Button */}
+          <button
+            className="hamburger"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          {/* Navigation Links */}
+          <ul className={`navbar-links ${isOpen ? "active" : ""}`}>
+            <li>
+              <a href="/" onClick={() => setIsOpen(false)}>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/customerLogin" onClick={() => setIsOpen(false)}>
+                Login
+              </a>
+            </li>
+            <li>
+              <a href="/customerSignup" onClick={() => setIsOpen(false)}>
+                Signup
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </>
   );
 };
 
