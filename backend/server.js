@@ -1,29 +1,24 @@
-// Load environment variables FIRST
-import dotenv from "dotenv";
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import authRoutes from './routes/authRoute.js';
+
 dotenv.config();
 
-// Core imports
-import express from "express";
-import connectDB from "./config/db.js";
-
-// App initialization
 const app = express();
 
-// Middleware
+// ✅ ADD THESE TWO LINES
+app.use(cors());
 app.use(express.json());
 
-// Environment variables
-const PORT = process.env.PORT || 5000;
+app.use('/api/auth', authRoutes);
 
-// Connect to MongoDB
-connectDB();
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(console.error);
 
-// Health check route
-app.get("/", (req, res) => {
-  res.send("Travel Buddy API is running 🚀");
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(5000, () => {
+  console.log('Server running on port 5000');
 });

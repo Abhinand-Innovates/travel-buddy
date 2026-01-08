@@ -10,7 +10,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/customerLogin" element={<CustomerLoginPage />} />
       <Route path="/customerSignup" element={<CustomerSignup />} />
-      <Route path="/varifyOtp" element={<VarifyOtp />} />
+      <Route path="/verify-otp" element={<VarifyOtp />} />
 
       <Route
         path="/"
