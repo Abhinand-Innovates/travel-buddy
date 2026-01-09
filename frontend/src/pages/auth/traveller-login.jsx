@@ -229,7 +229,7 @@ const CustomerLogin = () => {
           </button>
 
           <p className="signup-text">
-            Don't have an account? <a href="/CustomerSignup">Sign Up</a>
+            Don't have an account? <a href="/traveller/signup">Sign Up</a>
           </p>
         </div>
       </div>

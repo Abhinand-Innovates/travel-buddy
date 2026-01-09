@@ -8,9 +8,9 @@ import CustomerLoginPage from "../pages/auth/traveller-login";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/customerLogin" element={<CustomerLoginPage />} />
-      <Route path="/customerSignup" element={<CustomerSignup />} />
-      <Route path="/verify-otp" element={<VarifyOtp />} />
+      <Route path="/traveller/login" element={<CustomerLoginPage />} />
+      <Route path="/traveller/signup" element={<CustomerSignup />} />
+      <Route path="/traveller/varify/otp" element={<VarifyOtp />} />
 
       <Route
         path="/"

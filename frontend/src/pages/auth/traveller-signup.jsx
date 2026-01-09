@@ -44,7 +44,7 @@ const CustomerSignup = () => {
       });
 
       // ✅ Pass user data temporarily (NOT DB)
-      navigate('/verify-otp', {
+      navigate('/traveller/varify/otp', {
         state: {
           fullName: formData.fullName,
           email: formData.email,
@@ -95,7 +95,7 @@ const CustomerSignup = () => {
           </form>
 
           <p className="login-text">
-            Already have an account? <a href="/CustomerLogin">Sign In</a>
+            Already have an account? <a href="/traveller/login">Log In</a>
           </p>
         </div>
       </div>

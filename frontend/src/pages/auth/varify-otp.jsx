@@ -23,7 +23,7 @@ const VarifyOtp = () => {
   // 🔒 Redirect if page accessed directly
   useEffect(() => {
     if (!email || !fullName || !mobile || !password) {
-      navigate('/customerSignup');
+      navigate('/traveller/signup');
       return;
     }
     inputRefs.current[0]?.focus();
@@ -83,7 +83,7 @@ const VarifyOtp = () => {
       }
 
       showSuccess('Account created successfully');
-      navigate('/customerLogin');
+      navigate('/traveller/login');
 
     } catch (error) {
       showWarning('Something went wrong. Please try again.');
