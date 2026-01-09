@@ -170,11 +170,7 @@ const Navbar = () => {
 
           {/* Links */}
           <ul className={`navbar-links ${isOpen ? "active" : ""}`}>
-            <li>
-              <a href="/traveller/dashboard" onClick={() => setIsOpen(false)}>
-                Home
-              </a>
-            </li>
+            
 
             {/* Account Icon */}
             <li className="account-wrapper">

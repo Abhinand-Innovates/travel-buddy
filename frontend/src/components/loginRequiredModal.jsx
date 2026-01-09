@@ -7,7 +7,7 @@ const LoginRequiredModal = ({ isOpen, onClose }) => {
 
   const handleLogin = () => {
     onClose();
-    navigate("/customerLogin");
+    navigate("/traveller/login");
   };
 
   return (

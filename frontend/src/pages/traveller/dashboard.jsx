@@ -87,7 +87,7 @@ const CustomerDashboard = () => {
       <div className="dashboard-container">
         {/* Header */}
         <header className="dashboard-header">
-          <h1>Make Journey Memorable</h1>
+          <h1>Make Journies Memorable</h1>
           <p>Find verified local guides for your next Trip!!</p>
         </header>
 
