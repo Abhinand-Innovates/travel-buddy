@@ -10,18 +10,24 @@ const VarifyOtp = () => {
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { showWarning } = useFlashMessage();
+  const { showWarning, showSuccess } = useFlashMessage();
 
-  const email = state?.email;
+  // ✅ Get ALL user data from signup page
+  const {
+    fullName,
+    email,
+    mobile,
+    password,
+  } = state || {};
 
-  // Redirect if accessed directly
+  // 🔒 Redirect if page accessed directly
   useEffect(() => {
-    if (!email) {
+    if (!email || !fullName || !mobile || !password) {
       navigate('/customerSignup');
       return;
     }
     inputRefs.current[0]?.focus();
-  }, [email, navigate]);
+  }, [email, fullName, mobile, password, navigate]);
 
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
@@ -41,7 +47,7 @@ const VarifyOtp = () => {
     }
   };
 
-  // 🔐 VERIFY OTP
+  // 🔐 VERIFY OTP (FIXED)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -61,7 +67,10 @@ const VarifyOtp = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          fullName,
           email,
+          mobile,
+          password,
           otp: otpValue,
         }),
       });
@@ -73,7 +82,7 @@ const VarifyOtp = () => {
         return;
       }
 
-      // ✅ SUCCESS
+      showSuccess('Account created successfully');
       navigate('/customerLogin');
 
     } catch (error) {
@@ -83,7 +92,7 @@ const VarifyOtp = () => {
     }
   };
 
-  // 🔁 RESEND OTP
+  // 🔁 RESEND OTP (UNCHANGED)
   const handleResendOtp = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/auth/resend-otp', {
@@ -101,7 +110,7 @@ const VarifyOtp = () => {
         return;
       }
 
-      showWarning('OTP resent successfully');
+      showSuccess('OTP resent successfully');
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
 
@@ -113,7 +122,7 @@ const VarifyOtp = () => {
   return (
     <div className="otp-container">
       <div className="otp-card">
-        <h2 className="otp-title">Traval Buddy</h2>
+        <h2 className="otp-title">Travel Buddy</h2>
 
         <p className="otp-subtitle">
           We've sent a 6-digit verification code to <b>{email}</b>.<br />

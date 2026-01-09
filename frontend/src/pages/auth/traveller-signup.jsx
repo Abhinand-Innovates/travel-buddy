@@ -38,21 +38,27 @@ const CustomerSignup = () => {
     try {
       setLoading(true);
 
+      // ✅ SEND ONLY EMAIL
       await signupUser({
-        fullName: formData.fullName,
         email: formData.email,
-        mobile: formData.mobile,
-        password: formData.password,
       });
 
-      navigate('/verify-otp', { state: { email: formData.email } });
-
+      // ✅ Pass user data temporarily (NOT DB)
+      navigate('/verify-otp', {
+        state: {
+          fullName: formData.fullName,
+          email: formData.email,
+          mobile: formData.mobile,
+          password: formData.password,
+        },
+      });
     } catch (err) {
       showError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <>
