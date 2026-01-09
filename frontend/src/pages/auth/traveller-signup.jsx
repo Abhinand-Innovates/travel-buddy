@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validateSignup } from '../../validations/signupValidation';
 import { signupUser } from '../../services/authService';
+import { useFlashMessage } from '../../context/FlashMessageContext';
 import './traveller-signup.css';
 
 const CustomerSignup = () => {
   const navigate = useNavigate();
+  const { showError } = useFlashMessage();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -29,7 +31,7 @@ const CustomerSignup = () => {
 
     const error = validateSignup(formData);
     if (error) {
-      alert(error);
+      showError(error);
       return;
     }
 
@@ -46,7 +48,7 @@ const CustomerSignup = () => {
       navigate('/verify-otp', { state: { email: formData.email } });
 
     } catch (err) {
-      alert(err.message);
+      showError(err.message);
     } finally {
       setLoading(false);
     }

@@ -210,7 +210,7 @@ const CustomerLogin = () => {
             </div>
 
             <button type="submit" className="login-button">
-              Sign In
+              Log In
             </button>
           </form>
 
