@@ -73,46 +73,46 @@ const CustomerSignup = () => {
 
           <form onSubmit={handleSubmit} className="signup-form">
             <div className="input-group">
-              <label htmlFor="fullName">Full Name</label>
               <input
                 id="fullName"
                 type="text"
                 value={formData.fullName}
                 onChange={handleChange}
+                placeholder="Enter your full name"
                 required
               />
             </div>
 
             <div className="input-group">
-              <label htmlFor="email">Email</label>
               <input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="Enter your email"
                 required
               />
             </div>
 
             <div className="input-group">
-              <label htmlFor="mobile">Mobile Number</label>
               <input
                 id="mobile"
                 type="tel"
                 value={formData.mobile}
                 onChange={handleChange}
+                placeholder="Enter your mobile number"
                 required
               />
             </div>
 
             <div className="input-group password-input-group">
-              <label htmlFor="password">Password</label>
               <div className="password-field">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange}
+                  placeholder="Enter your password"
                   required
                 />
                 <button
@@ -137,13 +137,13 @@ const CustomerSignup = () => {
             </div>
 
             <div className="input-group password-input-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
               <div className="password-field">
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  placeholder="Confirm your password"
                   required
                 />
                 <button
