@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
+import { useFlashMessage } from '../../context/FlashMessageContext';
 
 const CustomerLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { showError, showSuccess } = useFlashMessage();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // Add your login logic here
+    setLoading(true);
+
+    try {
+      const response = await loginUser(email, password);
+      login(response.user, response.token);
+      showSuccess(response.message || 'Login successful!');
+      navigate('/traveller/dashboard');
+    } catch (error) {
+      showError(error.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -34,6 +52,8 @@ const CustomerLogin = () => {
           align-items: center;
           justify-content: center;
           background-color: #f5f5f5;
+          padding: 20px;
+          margin-top: 20px;
         }
 
         .login-card {
@@ -120,6 +140,11 @@ const CustomerLogin = () => {
           background-color: #45a049;
         }
 
+        .login-button:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+        }
+
         .divider {
           margin: 30px 0;
           position: relative;
@@ -180,7 +205,7 @@ const CustomerLogin = () => {
 
       <div className="login-container">
         <div className="login-card">
-          <h2 className="login-title">Traval Buddy</h2>
+          <h2 className="login-title">Travel Buddy</h2>
           <p className="login-subtitle">Sign in to your account</p>
 
           <form onSubmit={handleSubmit} className="login-form">
@@ -193,6 +218,7 @@ const CustomerLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -205,12 +231,13 @@ const CustomerLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                disabled={loading}
               />
               <a href="#" className="forgot-link">Forgot password?</a>
             </div>
 
-            <button type="submit" className="login-button">
-              Log In
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
@@ -218,7 +245,7 @@ const CustomerLogin = () => {
             <span>or</span>
           </div>
 
-          <button onClick={handleGoogleSignIn} className="google-button">
+          <button onClick={handleGoogleSignIn} className="google-button" disabled={loading}>
             <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.64 9.2045C17.64 8.5664 17.5827 7.9527 17.4764 7.3636H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4"/>
               <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.6555 14.4205 4.6718 12.8373 3.9641 10.71H0.9573V13.0418C2.4382 15.9832 5.4818 18 9 18Z" fill="#34A853"/>

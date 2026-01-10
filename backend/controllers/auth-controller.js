@@ -1,10 +1,17 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import User from '../models/user-schema.js';
 import Otp from '../models/otp-schema.js';
 import { sendEmail } from '../utils/sendEmail.js';
 
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
+
+const generateJwt = (email) => {
+  const secret = process.env.JWT_SECRET || 'your-secret-key';
+  const token = jwt.sign({ email }, secret, { expiresIn: '7d' });
+  return token;
+};
 
 /* ======================
    SIGNUP (SEND OTP)
@@ -96,5 +103,42 @@ export const verifyOtp = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'OTP verification failed' });
+  }
+};
+
+/* ======================
+   LOGIN
+====================== */
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const token = generateJwt(email);
+
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        email: user.email,
+        fullName: user.fullName,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Login failed' });
   }
 };
