@@ -122,6 +122,16 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    // Check if user is deleted
+    if (user.isDeleted) {
+      return res.status(403).json({ message: 'User account has been deleted' });
+    }
+
+    // Check if user is blocked
+    if (user.blocked) {
+      return res.status(403).json({ message: 'User account has been blocked' });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -135,6 +145,7 @@ export const login = async (req, res) => {
       user: {
         email: user.email,
         fullName: user.fullName,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {

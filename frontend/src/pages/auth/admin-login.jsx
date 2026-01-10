@@ -21,7 +21,11 @@ const AdminLogin = () => {
       const response = await loginUser(email, password);
       login(response.user, response.token);
       showSuccess(response.message || 'Login successful!');
-      navigate('/admin/dashboard');
+      
+      // Use setTimeout to ensure context state updates before navigation
+      setTimeout(() => {
+        navigate('/admin/dashboard');
+      }, 100);
     } catch (error) {
       showError(error.message || 'Login failed');
     } finally {
@@ -49,7 +53,6 @@ const AdminLogin = () => {
           justify-content: center;
           background-color: #f5f5f5;
           padding: 20px;
-          margin-top: 20px;
         }
 
         .login-card {

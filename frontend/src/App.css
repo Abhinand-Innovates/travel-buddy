@@ -3,6 +3,27 @@
   min-height: 100vh;
 }
 
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f8f0 0%, #d4edda 100%);
+}
+
+.spinner {
+  font-size: 18px;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.coming-soon {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 18px;
+  font-weight: 500;
+}
 
 .logo {
   height: 6em;
