@@ -8,6 +8,10 @@ import AdminLogin from "../pages/auth/admin-login";
 import AdminLayout from "../pages/admin/AdminLayout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import UserManagement from "../pages/admin/UserManagement";
+import GuideManagement from "../pages/admin/GuideManagement";
+import GuideSignup from "../pages/guide/guide-signup";
+import GuideLogin from "../pages/guide/guide-login";
+import KycManagement from "../pages/admin/KycManagement";
 import { useAuth } from "../context/AuthContext";
 
 // Protected Route Component for Admin
@@ -36,6 +40,8 @@ const AppRoutes = () => {
       <Route path="/traveller/login" element={<CustomerLoginPage />} />
       <Route path="/traveller/signup" element={<CustomerSignup />} />
       <Route path="/traveller/varify/otp" element={<VarifyOtp />} />
+      <Route path="/guide/signup" element={<GuideSignup />} />
+      <Route path="/guide/login" element={<GuideLogin />} />
       <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* Protected Admin routes */}
@@ -59,7 +65,7 @@ const AppRoutes = () => {
         path="/admin/guides"
         element={
           <ProtectedAdminRoute>
-            <div className="coming-soon">Coming Soon - Guide Management</div>
+            <GuideManagement />
           </ProtectedAdminRoute>
         }
       />
@@ -67,7 +73,7 @@ const AppRoutes = () => {
         path="/admin/kyc"
         element={
           <ProtectedAdminRoute>
-            <div className="coming-soon">Coming Soon - KYC Management</div>
+            <KycManagement />
           </ProtectedAdminRoute>
         }
       />
