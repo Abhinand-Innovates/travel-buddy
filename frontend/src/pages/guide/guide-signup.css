@@ -1,20 +1,20 @@
 .guide-signup-container {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
   padding: 20px;
-  margin-top: 20px;
 }
 
 .guide-signup-card {
   background-color: white;
-  padding: 40px;
+  padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 500px;
+  max-width: 420px;
   text-align: center;
 }
 
@@ -71,6 +71,40 @@
 .signup-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.traveller-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.traveller-link a {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.traveller-link a:hover {
+  text-decoration: underline;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-link a {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
 }
 
 /* Selfie Step */

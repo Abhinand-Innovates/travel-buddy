@@ -22,7 +22,7 @@ const Navbar = () => {
     logout();
     setIsDropdownOpen(false);
     setIsOpen(false);
-    navigate("/");
+    navigate("/traveller/login");
   };
 
   const handleNavClick = () => {

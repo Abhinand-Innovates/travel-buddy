@@ -175,6 +175,10 @@ const CustomerSignup = () => {
           <p className="login-text">
             Already have an account? <a href="/traveller/login">Log In</a>
           </p>
+
+          <p className="guest-link">
+            <a href="/guide/signup">Signup as a Guide</a>
+          </p>
         </div>
       </div>
     </>

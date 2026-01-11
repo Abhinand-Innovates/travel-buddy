@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getToken, getUserData, removeToken } from '../services/authService';
+import { getToken, getUserData, removeToken, setToken, setUserData } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -16,19 +16,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state from localStorage on mount
+  // Initialize auth state - always start as guest (not authenticated)
   useEffect(() => {
-    const token = getToken();
-    const userData = getUserData();
-
-    if (token && userData) {
-      setIsAuthenticated(true);
-      setUser(userData);
-    } else {
-      setIsAuthenticated(false);
-      setUser(null);
-    }
-
+    // Clear any stale auth data on app start
+    removeToken();
+    setIsAuthenticated(false);
+    setUser(null);
     setLoading(false);
   }, []);
 
