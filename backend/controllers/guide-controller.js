@@ -331,3 +331,67 @@ export const getAllGuides = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch guides' });
   }
 };
+
+/* ======================
+   ADMIN: Block/Unblock Guide
+====================== */
+export const blockUnblockGuide = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const guide = await GuideRequest.findById(id);
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+
+    if (guide.isDeleted) {
+      return res.status(403).json({ message: 'Cannot modify deleted guide' });
+    }
+
+    // Toggle blocked status
+    guide.blocked = !guide.blocked;
+    await guide.save();
+
+    return res.status(200).json({
+      message: guide.blocked ? 'Guide blocked successfully' : 'Guide unblocked successfully',
+      guide: {
+        _id: guide._id,
+        fullName: guide.fullName,
+        email: guide.email,
+        blocked: guide.blocked,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update guide' });
+  }
+};
+
+/* ======================
+   ADMIN: Soft Delete Guide
+====================== */
+export const softDeleteGuide = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const guide = await GuideRequest.findById(id);
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+
+    if (guide.isDeleted) {
+      return res.status(403).json({ message: 'Guide already deleted' });
+    }
+
+    // Soft delete - mark as deleted
+    guide.isDeleted = true;
+    await guide.save();
+
+    return res.status(200).json({
+      message: 'Guide deleted successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to delete guide' });
+  }
+};

@@ -44,6 +44,14 @@ const guideRequestSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
