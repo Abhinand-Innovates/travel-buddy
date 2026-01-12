@@ -16,16 +16,24 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state - always start as guest (not authenticated)
+  // Initialize auth state from localStorage
   useEffect(() => {
-    // Clear any stale auth data on app start
-    removeToken();
-    setIsAuthenticated(false);
-    setUser(null);
+    const token = getToken();
+    const userData = getUserData();
+
+    if (token && userData) {
+      setIsAuthenticated(true);
+      setUser(userData);
+    } else {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
     setLoading(false);
   }, []);
 
   const login = (userData, token) => {
+    setToken(token);
+    setUserData(userData);
     setUser(userData);
     setIsAuthenticated(true);
   };

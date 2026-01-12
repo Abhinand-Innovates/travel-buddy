@@ -13,6 +13,7 @@ import GuideSignup from "../pages/guide/guide-signup";
 import GuideLogin from "../pages/guide/guide-login";
 import KycManagement from "../pages/admin/KycManagement";
 import { useAuth } from "../context/AuthContext";
+import { ProtectedRoute, PublicRoute } from "../components/ProtectedRoutes/ProtectedRoute";
 
 // Protected Route Component for Admin
 const ProtectedAdminRoute = ({ children }) => {
@@ -110,23 +111,25 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected routes with Navbar */}
+      {/* Protected routes with Navbar - Protected Routes */}
       <Route
         path="/traveller/dashboard"
         element={
-          <>
+          <ProtectedRoute>
             <Navbar />
             <CustomerDashboard />
-          </>
+          </ProtectedRoute>
         }
       />
+
+      {/* Public Route - Home Page (accessible only before login) */}
       <Route
         path="/"
         element={
-          <>
+          <PublicRoute>
             <Navbar />
             <CustomerDashboard />
-          </>
+          </PublicRoute>
         }
       />
     </Routes>

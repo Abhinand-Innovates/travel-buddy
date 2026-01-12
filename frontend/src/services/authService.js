@@ -3,18 +3,18 @@ const API_BASE_URL = 'http://localhost:5000/api/auth';
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
 
-// Token Management
+// Token Management - Using sessionStorage (isolated per tab)
 export const setToken = (token) => {
-  localStorage.setItem(TOKEN_KEY, token);
+  sessionStorage.setItem(TOKEN_KEY, token);
 };
 
 export const getToken = () => {
-  return localStorage.getItem(TOKEN_KEY);
+  return sessionStorage.getItem(TOKEN_KEY);
 };
 
 export const removeToken = () => {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(USER_KEY);
 };
 
 export const isAuthenticated = () => {
@@ -22,11 +22,11 @@ export const isAuthenticated = () => {
 };
 
 export const setUserData = (userData) => {
-  localStorage.setItem(USER_KEY, JSON.stringify(userData));
+  sessionStorage.setItem(USER_KEY, JSON.stringify(userData));
 };
 
 export const getUserData = () => {
-  const data = localStorage.getItem(USER_KEY);
+  const data = sessionStorage.getItem(USER_KEY);
   return data ? JSON.parse(data) : null;
 };
 
