@@ -39,3 +39,22 @@ export const PublicRoute = ({ children }) => {
 
   return children;
 };
+
+// Middleware for guide routes that require authentication
+export const ProtectedGuideRoute = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/guide/login" replace />;
+  }
+
+  return children;
+};

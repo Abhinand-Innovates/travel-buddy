@@ -38,6 +38,69 @@ const upload = multer({
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
 
+const generateJwt = (email) => {
+  const secret = process.env.JWT_SECRET || 'your-secret-key';
+  const token = jwt.sign({ email }, secret, { expiresIn: '7d' });
+  return token;
+};
+
+/* ======================
+   GUIDE LOGIN
+====================== */
+export const guideLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    // Check GuideRequest first
+    const guideRequest = await GuideRequest.findOne({ email });
+    if (!guideRequest) {
+      console.log(`[Guide Login] Guide not found for email: ${email}`);
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    console.log(`[Guide Login] Guide found: ${guideRequest.fullName}, Status: ${guideRequest.status}`);
+
+    // Check if guide is approved
+    if (guideRequest.status !== 'approved') {
+      console.log(`[Guide Login] Guide not approved: ${guideRequest.status}`);
+      return res.status(403).json({ message: `Your KYC is ${guideRequest.status}. Please wait for admin approval.` });
+    }
+
+    // Check if guide is blocked
+    if (guideRequest.blocked) {
+      console.log(`[Guide Login] Guide is blocked: ${email}`);
+      return res.status(403).json({ message: 'Your account has been blocked' });
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, guideRequest.passwordHash);
+    if (!isPasswordValid) {
+      console.log(`[Guide Login] Invalid password for: ${email}`);
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    console.log(`[Guide Login] Login successful for: ${email}`);
+    const token = generateJwt(email);
+
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        email: guideRequest.email,
+        fullName: guideRequest.fullName,
+        isGuide: true,
+      },
+    });
+  } catch (error) {
+    console.error('[Guide Login Error]', error);
+    res.status(500).json({ message: 'Login failed' });
+  }
+};
+
 /* ======================
    STEP 1: Save Guide Details Temporarily
 ====================== */
@@ -250,21 +313,11 @@ export const approveGuide = async (req, res) => {
       return res.status(404).json({ message: 'Guide request not found' });
     }
 
-    // Create user account
-    await User.create({
-      fullName: guide.fullName,
-      email: guide.email,
-      mobile: guide.mobile,
-      password: guide.passwordHash,
-      isVerified: true,
-      // Add role as guide if needed, but for now assume regular user
-    });
-
-    // Update status
+    // Update status to approved
     guide.status = 'approved';
     await guide.save();
 
-    return res.status(200).json({ message: 'Guide approved successfully' });
+    return res.status(200).json({ message: 'Guide approved successfully', guide });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Failed to approve guide' });

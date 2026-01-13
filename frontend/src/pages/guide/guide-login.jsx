@@ -20,10 +20,25 @@ const GuideLogin = () => {
     setLoading(true);
 
     try {
-      const response = await loginUser(email, password);
+      // Use guide-specific login endpoint
+      const res = await fetch('http://localhost:5000/api/guide/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const response = await res.json();
+
+      if (!res.ok) {
+        showError(response.message || 'Login failed');
+        return;
+      }
+
       login(response.user, response.token);
       showSuccess(response.message || 'Login successful!');
-      navigate('/traveller/dashboard'); // Guides also go to traveller dashboard for now
+      navigate('/guide/dashboard');
     } catch (error) {
       showError(error.message || 'Login failed');
     } finally {

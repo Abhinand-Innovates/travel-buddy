@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import './GuideManagement.css';
 
 const KycManagement = () => {
@@ -8,6 +9,7 @@ const KycManagement = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [expandedImage, setExpandedImage] = useState(null);
 
   useEffect(() => {
     fetchPendingGuides();
@@ -15,7 +17,8 @@ const KycManagement = () => {
 
   const fetchPendingGuides = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
+      setLoading(true);
+      const token = sessionStorage.getItem('auth_token');
       const res = await fetch('http://localhost:5000/api/guide/pending', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -24,19 +27,38 @@ const KycManagement = () => {
 
       if (res.ok) {
         const data = await res.json();
-        setGuides(data);
+        setGuides(data || []);
       }
     } catch (error) {
       console.error('Failed to fetch guides:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to fetch KYC requests',
+        icon: 'error',
+        confirmButtonColor: '#dc3545',
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleApprove = async (id) => {
+    const result = await Swal.fire({
+      title: 'Approve KYC?',
+      text: 'Are you sure you want to approve this KYC application?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, approve it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) return;
+
     setActionLoading(true);
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = sessionStorage.getItem('auth_token');
       const res = await fetch(`http://localhost:5000/api/guide/approve/${id}`, {
         method: 'PUT',
         headers: {
@@ -44,16 +66,28 @@ const KycManagement = () => {
         },
       });
 
-      if (res.ok) {
-        setGuides(guides.filter(guide => guide._id !== id));
-        setSelectedGuide(null);
-        alert('Guide approved successfully');
-      } else {
-        alert('Failed to approve guide');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to approve guide');
       }
-    } catch (error) {
-      console.error('Failed to approve guide:', error);
-      alert('Failed to approve guide');
+
+      setGuides(guides.filter(guide => guide._id !== id));
+      setSelectedGuide(null);
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'Guide approved successfully',
+        icon: 'success',
+        confirmButtonColor: '#28a745',
+      });
+    } catch (err) {
+      Swal.fire({
+        title: 'Error!',
+        text: err.message,
+        icon: 'error',
+        confirmButtonColor: '#dc3545',
+      });
     } finally {
       setActionLoading(false);
     }
@@ -61,13 +95,18 @@ const KycManagement = () => {
 
   const handleReject = async (id) => {
     if (!rejectionReason.trim()) {
-      alert('Please provide a reason for rejection');
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please provide a reason for rejection',
+        icon: 'error',
+        confirmButtonColor: '#dc3545',
+      });
       return;
     }
 
     setActionLoading(true);
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = sessionStorage.getItem('auth_token');
       const res = await fetch(`http://localhost:5000/api/guide/reject/${id}`, {
         method: 'PUT',
         headers: {
@@ -77,18 +116,30 @@ const KycManagement = () => {
         body: JSON.stringify({ reason: rejectionReason }),
       });
 
-      if (res.ok) {
-        setGuides(guides.filter(guide => guide._id !== id));
-        setSelectedGuide(null);
-        setShowRejectModal(false);
-        setRejectionReason('');
-        alert('Guide rejected successfully');
-      } else {
-        alert('Failed to reject guide');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to reject guide');
       }
+
+      setGuides(guides.filter(guide => guide._id !== id));
+      setSelectedGuide(null);
+      setShowRejectModal(false);
+      setRejectionReason('');
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'Guide rejected successfully',
+        icon: 'success',
+        confirmButtonColor: '#28a745',
+      });
     } catch (error) {
-      console.error('Failed to reject guide:', error);
-      alert('Failed to reject guide');
+      Swal.fire({
+        title: 'Error!',
+        text: error.message || 'Failed to reject guide',
+        icon: 'error',
+        confirmButtonColor: '#dc3545',
+      });
     } finally {
       setActionLoading(false);
     }
@@ -100,51 +151,90 @@ const KycManagement = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading KYC requests...</div>;
+    return (
+      <div className="guide-management">
+        <div className="loading-spinner">Loading KYC requests...</div>
+      </div>
+    );
   }
 
   return (
     <div className="guide-management">
-      <h2>KYC Management</h2>
+      <div className="management-header">
+        <h1>KYC Management</h1>
+        <p>Pending KYC Requests: <span className="total-count">{guides.length}</span></p>
+      </div>
 
       {guides.length === 0 ? (
-        <div className="no-guides">No pending KYC requests</div>
+        <div className="no-guides">
+          <p>No pending KYC requests</p>
+        </div>
       ) : (
-        <div className="guides-list">
-          {guides.map((guide) => (
-            <div key={guide._id} className="guide-card">
-              <div className="guide-info">
-                <h3>{guide.fullName}</h3>
-                <p>Email: {guide.email}</p>
-                <p>Phone: {guide.mobile}</p>
-                <p>Address: {guide.fullAddress}</p>
-                <p>Status: {guide.status}</p>
-                <p>Created: {new Date(guide.createdAt).toLocaleDateString()}</p>
-              </div>
-              <div className="guide-actions">
-                <button
-                  onClick={() => setSelectedGuide(guide)}
-                  className="view-btn"
-                >
-                  View Details
-                </button>
-                <button
-                  onClick={() => handleApprove(guide._id)}
-                  className="approve-btn"
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? 'Processing...' : 'Approve'}
-                </button>
-                <button
-                  onClick={() => openRejectModal(guide)}
-                  className="reject-btn"
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? 'Processing...' : 'Reject'}
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="guides-table-container">
+          <table className="guides-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {guides.map((guide) => (
+                <tr key={guide._id} className={`${guide.status}-row`}>
+                  <td>
+                    <span className="guide-name">
+                      {guide.fullName}
+                      <span className={`status-badge ${guide.status}`}>{guide.status.toUpperCase()}</span>
+                    </span>
+                  </td>
+                  <td>{guide.email}</td>
+                  <td>{guide.mobile}</td>
+                  <td className="address-cell">{guide.fullAddress}</td>
+                  <td>
+                    <span className={`status-badge ${guide.status}`}>
+                      {guide.status === 'pending' && '⏳ Pending'}
+                    </span>
+                  </td>
+                  <td className="date-cell">
+                    {new Date(guide.createdAt).toLocaleDateString('en-IN')}
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        className="btn btn-view"
+                        onClick={() => setSelectedGuide(guide)}
+                        title="View Details"
+                        disabled={actionLoading}
+                      >
+                        View
+                      </button>
+                      <button
+                        className="btn btn-success"
+                        onClick={() => handleApprove(guide._id)}
+                        title="Approve KYC"
+                        disabled={actionLoading}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => openRejectModal(guide)}
+                        title="Reject KYC"
+                        disabled={actionLoading}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -167,6 +257,8 @@ const KycManagement = () => {
                   src={`http://localhost:5000${selectedGuide.selfieUrl.startsWith('/') ? selectedGuide.selfieUrl : '/' + selectedGuide.selfieUrl}`}
                   alt="Selfie"
                   className="document-image"
+                  onClick={() => setExpandedImage(`http://localhost:5000${selectedGuide.selfieUrl.startsWith('/') ? selectedGuide.selfieUrl : '/' + selectedGuide.selfieUrl}`)}
+                  style={{ cursor: 'pointer' }}
                 />
               </div>
 
@@ -176,6 +268,8 @@ const KycManagement = () => {
                   src={`http://localhost:5000${selectedGuide.aadhaarFrontUrl.startsWith('/') ? selectedGuide.aadhaarFrontUrl : '/' + selectedGuide.aadhaarFrontUrl}`}
                   alt="Aadhaar Front"
                   className="document-image"
+                  onClick={() => setExpandedImage(`http://localhost:5000${selectedGuide.aadhaarFrontUrl.startsWith('/') ? selectedGuide.aadhaarFrontUrl : '/' + selectedGuide.aadhaarFrontUrl}`)}
+                  style={{ cursor: 'pointer' }}
                 />
               </div>
 
@@ -185,6 +279,8 @@ const KycManagement = () => {
                   src={`http://localhost:5000${selectedGuide.aadhaarBackUrl.startsWith('/') ? selectedGuide.aadhaarBackUrl : '/' + selectedGuide.aadhaarBackUrl}`}
                   alt="Aadhaar Back"
                   className="document-image"
+                  onClick={() => setExpandedImage(`http://localhost:5000${selectedGuide.aadhaarBackUrl.startsWith('/') ? selectedGuide.aadhaarBackUrl : '/' + selectedGuide.aadhaarBackUrl}`)}
+                  style={{ cursor: 'pointer' }}
                 />
               </div>
             </div>
@@ -192,21 +288,21 @@ const KycManagement = () => {
             <div className="modal-actions">
               <button
                 onClick={() => handleApprove(selectedGuide._id)}
-                className="approve-btn"
+                className="btn btn-success"
                 disabled={actionLoading}
               >
                 {actionLoading ? 'Processing...' : 'Approve'}
               </button>
               <button
                 onClick={() => openRejectModal(selectedGuide)}
-                className="reject-btn"
+                className="btn btn-danger"
                 disabled={actionLoading}
               >
                 {actionLoading ? 'Processing...' : 'Reject'}
               </button>
               <button
                 onClick={() => setSelectedGuide(null)}
-                className="close-btn"
+                className="btn btn-close"
               >
                 Close
               </button>
@@ -225,7 +321,7 @@ const KycManagement = () => {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="Enter rejection reason..."
-                rows="4"
+                rows="6"
                 className="reason-textarea"
               />
             </div>
@@ -233,7 +329,7 @@ const KycManagement = () => {
             <div className="modal-actions">
               <button
                 onClick={() => handleReject(selectedGuide._id)}
-                className="reject-btn"
+                className="btn btn-danger"
                 disabled={actionLoading || !rejectionReason.trim()}
               >
                 {actionLoading ? 'Processing...' : 'Confirm Rejection'}
@@ -242,12 +338,28 @@ const KycManagement = () => {
                 onClick={() => {
                   setShowRejectModal(false);
                   setRejectionReason('');
+                  setSelectedGuide(null);
                 }}
-                className="close-btn"
+                className="btn btn-close"
               >
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {expandedImage && (
+        <div className="modal-overlay" onClick={() => setExpandedImage(null)}>
+          <div className="image-viewer-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="close-image-btn"
+              onClick={() => setExpandedImage(null)}
+              title="Close"
+            >
+              ✕
+            </button>
+            <img src={expandedImage} alt="Expanded view" className="expanded-image" />
           </div>
         </div>
       )}

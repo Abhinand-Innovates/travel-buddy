@@ -11,9 +11,10 @@ import UserManagement from "../pages/admin/UserManagement";
 import GuideManagement from "../pages/admin/GuideManagement";
 import GuideSignup from "../pages/guide/guide-signup";
 import GuideLogin from "../pages/guide/guide-login";
+import GuideDashboard from "../pages/guide/guide-dashboard";
 import KycManagement from "../pages/admin/KycManagement";
 import { useAuth } from "../context/AuthContext";
-import { ProtectedRoute, PublicRoute } from "../components/ProtectedRoutes/ProtectedRoute";
+import { ProtectedRoute, PublicRoute, ProtectedGuideRoute } from "../components/ProtectedRoutes/ProtectedRoute";
 
 // Protected Route Component for Admin
 const ProtectedAdminRoute = ({ children }) => {
@@ -119,6 +120,16 @@ const AppRoutes = () => {
             <Navbar />
             <CustomerDashboard />
           </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Guide Dashboard Route */}
+      <Route
+        path="/guide/dashboard"
+        element={
+          <ProtectedGuideRoute>
+            <GuideDashboard />
+          </ProtectedGuideRoute>
         }
       />
 

@@ -41,9 +41,10 @@ const GuideManagement = () => {
     }
   };
 
-  // Filter guides based on search term
+  // Filter guides based on search term and only show approved guides
   const filteredGuides = guides.filter((guide) => {
     if (guide.isDeleted) return false; // Don't show deleted guides
+    if (guide.status !== 'approved') return false; // Only show approved guides
     return (
       guide.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       guide.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,111 +64,7 @@ const GuideManagement = () => {
     return 0;
   });
 
-  const handleApprove = async (id) => {
-    const result = await Swal.fire({
-      title: 'Approve Guide?',
-      text: 'Are you sure you want to approve this guide?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#28a745',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, approve it!',
-      cancelButtonText: 'Cancel',
-    });
 
-    if (!result.isConfirmed) return;
-
-    setActionLoading(true);
-    try {
-      const token = sessionStorage.getItem('auth_token');
-      const res = await fetch(`http://localhost:5000/api/guide/approve/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to approve guide');
-      }
-
-      setGuides(guides.map(guide => 
-        guide._id === id ? { ...guide, status: 'approved' } : guide
-      ));
-      setSelectedGuide(null);
-
-      Swal.fire({
-        title: 'Success!',
-        text: data.message,
-        icon: 'success',
-        confirmButtonColor: '#28a745',
-      });
-    } catch (err) {
-      Swal.fire({
-        title: 'Error!',
-        text: err.message,
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-      });
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleReject = async (id) => {
-    const result = await Swal.fire({
-      title: 'Reject Guide?',
-      text: 'This action will permanently delete all uploaded files.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, reject it!',
-      cancelButtonText: 'Cancel',
-    });
-
-    if (!result.isConfirmed) return;
-
-    setActionLoading(true);
-    try {
-      const token = sessionStorage.getItem('auth_token');
-      const res = await fetch(`http://localhost:5000/api/guide/reject/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to reject guide');
-      }
-
-      setGuides(guides.map(guide => 
-        guide._id === id ? { ...guide, status: 'rejected' } : guide
-      ));
-      setSelectedGuide(null);
-
-      Swal.fire({
-        title: 'Success!',
-        text: data.message,
-        icon: 'success',
-        confirmButtonColor: '#28a745',
-      });
-    } catch (err) {
-      Swal.fire({
-        title: 'Error!',
-        text: err.message,
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-      });
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
   const handleViewDetails = (guide) => {
     setSelectedGuide(guide);
@@ -293,7 +190,7 @@ const GuideManagement = () => {
     <div className="guide-management">
       <div className="management-header">
         <h1>Guide Management</h1>
-        <p>Total Guides: <span className="total-count">{guides.length}</span></p>
+        <p>Approved Guides: <span className="total-count">{guides.filter(g => g.status === 'approved' && !g.isDeleted).length}</span></p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -380,46 +277,22 @@ const GuideManagement = () => {
                       >
                         View
                       </button>
-                      {guide.status === 'pending' && (
-                        <>
-                          <button
-                            className="btn btn-success"
-                            onClick={() => handleApprove(guide._id)}
-                            title="Approve Guide"
-                            disabled={actionLoading}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleReject(guide._id)}
-                            title="Reject Guide"
-                            disabled={actionLoading}
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-                      {guide.status === 'approved' && (
-                        <>
-                          <button
-                            className={`btn ${guide.blocked ? 'btn-success' : 'btn-warning'}`}
-                            onClick={() => handleBlockUnblock(guide._id, guide.blocked)}
-                            title={guide.blocked ? 'Unblock Guide' : 'Block Guide'}
-                            disabled={actionLoading}
-                          >
-                            {guide.blocked ? 'Unblock' : 'Block'}
-                          </button>
-                          <button
-                            className="btn btn-delete"
-                            onClick={() => handleSoftDelete(guide._id)}
-                            title="Delete Guide"
-                            disabled={actionLoading}
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
+                      <button
+                        className={`btn ${guide.blocked ? 'btn-success' : 'btn-warning'}`}
+                        onClick={() => handleBlockUnblock(guide._id, guide.blocked)}
+                        title={guide.blocked ? 'Unblock Guide' : 'Block Guide'}
+                        disabled={actionLoading}
+                      >
+                        {guide.blocked ? 'Unblock' : 'Block'}
+                      </button>
+                      <button
+                        className="btn btn-delete"
+                        onClick={() => handleSoftDelete(guide._id)}
+                        title="Delete Guide"
+                        disabled={actionLoading}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -472,24 +345,6 @@ const GuideManagement = () => {
             </div>
 
             <div className="modal-actions">
-              {selectedGuide.status === 'pending' && (
-                <>
-                  <button
-                    onClick={() => handleApprove(selectedGuide._id)}
-                    className="btn btn-success"
-                    disabled={actionLoading}
-                  >
-                    {actionLoading ? 'Processing...' : 'Approve'}
-                  </button>
-                  <button
-                    onClick={() => handleReject(selectedGuide._id)}
-                    className="btn btn-danger"
-                    disabled={actionLoading}
-                  >
-                    {actionLoading ? 'Processing...' : 'Reject'}
-                  </button>
-                </>
-              )}
               <button
                 onClick={() => setSelectedGuide(null)}
                 className="btn btn-close"

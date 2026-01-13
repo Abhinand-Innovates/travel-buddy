@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  guideLogin,
   saveGuideDetails,
   uploadSelfie,
   uploadAadhaar,
@@ -18,6 +19,7 @@ import { authenticateToken, requireAdmin } from '../middlewares/auth-middleware.
 const router = express.Router();
 
 // Public routes
+router.post('/login', guideLogin);
 router.post('/details', saveGuideDetails);
 router.post('/upload-selfie', uploadSelfie);
 router.post('/upload-aadhaar', uploadAadhaar);
