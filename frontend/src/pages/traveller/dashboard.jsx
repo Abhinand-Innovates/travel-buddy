@@ -1,9 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../../components/serachBar";
 import LoginRequiredModal from "../../components/loginRequiredModal";
+import { apiClient } from "../../utils/apiClient";
 
 const CustomerDashboard = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        await apiClient('http://localhost:5000/api/user/profile');
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    
+    const token = sessionStorage.getItem('auth_token');
+    if (token) {
+      fetchUserData();
+    }
+  }, []);
 
   const handlePlaceSelect = (place) => {
     const token = localStorage.getItem("token");

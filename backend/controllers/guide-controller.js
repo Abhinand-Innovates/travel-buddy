@@ -70,6 +70,12 @@ export const guideLogin = async (req, res) => {
       return res.status(403).json({ message: `Your KYC is ${guideRequest.status}. Please wait for admin approval.` });
     }
 
+    // Check if guide is deleted
+    if (guideRequest.isDeleted) {
+      console.log(`[Guide Login] Guide is deleted: ${email}`);
+      return res.status(403).json({ message: 'Your account has been deleted. Please contact the support team for assistance.' });
+    }
+
     // Check if guide is blocked
     if (guideRequest.blocked) {
       console.log(`[Guide Login] Guide is blocked: ${email}`);

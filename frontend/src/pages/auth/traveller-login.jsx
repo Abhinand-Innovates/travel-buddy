@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loginUser } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import { useFlashMessage } from '../../context/FlashMessageContext';
@@ -9,9 +9,17 @@ const CustomerLogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showError, showSuccess } = useFlashMessage();
+
+  useEffect(() => {
+    const message = searchParams.get('message');
+    if (message) {
+      showError(message);
+    }
+  }, [searchParams, showError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

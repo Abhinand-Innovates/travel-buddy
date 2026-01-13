@@ -124,12 +124,12 @@ export const login = async (req, res) => {
 
     // Check if user is deleted
     if (user.isDeleted) {
-      return res.status(403).json({ message: 'User account has been deleted' });
+      return res.status(403).json({ message: 'Your account has been deleted. Please contact the support team for assistance.' });
     }
 
     // Check if user is blocked
     if (user.blocked) {
-      return res.status(403).json({ message: 'User account has been blocked' });
+      return res.status(403).json({ message: 'Your account is temporarily blocked. Please contact the support team for assistance.' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
