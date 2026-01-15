@@ -177,12 +177,20 @@
 .next-button,
 .retake-button {
   padding: 12px 24px;
-  margin: 10px;
+  margin: 10px 5px;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.selfie-step .button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .camera-button {
@@ -274,7 +282,7 @@
 
 .image-preview {
   width: 100%;
-  max-width: 200px;
+  max-width: 150px;
   border-radius: 8px;
   margin-top: 10px;
 }

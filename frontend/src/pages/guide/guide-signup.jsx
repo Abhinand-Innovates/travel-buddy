@@ -514,12 +514,14 @@ const GuideSignup = () => {
             {selfiePreview && (
               <div>
                 <img src={selfiePreview} alt="Selfie" className="selfie-preview" />
-                <button onClick={handleStep2} className="next-button" disabled={loading}>
-                  {loading ? 'Uploading...' : 'Next'}
-                </button>
-                <button onClick={() => { setSelfie(null); setSelfiePreview(null); }} className="retake-button">
-                  Retake
-                </button>
+                <div className="button-group">
+                  <button onClick={() => { setSelfie(null); setSelfiePreview(null); }} className="retake-button">
+                    Retake
+                  </button>
+                  <button onClick={handleStep2} className="next-button" disabled={loading}>
+                    {loading ? 'Uploading...' : 'Next'}
+                  </button>
+                </div>
               </div>
             )}
             <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
