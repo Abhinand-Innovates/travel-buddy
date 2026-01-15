@@ -103,7 +103,7 @@ const Navbar = () => {
           position: absolute;
           right: 0;
           top: 45px;
-          width: 200px;
+          width: 180px;
           background: white;
           border: 1px solid #e5e7eb;
           box-shadow: 0 6px 15px rgba(0,0,0,0.1);
@@ -112,19 +112,38 @@ const Navbar = () => {
           z-index: 2000;
         }
 
+        .dropdown-user-info {
+          padding: 10px 12px;
+          background-color: #f9fafb;
+          border-bottom: 1px solid #e5e7eb;
+          cursor: default;
+        }
+
+        .dropdown-user-name {
+          font-weight: 700;
+          font-size: 0.9rem;
+          color: #1f2937;
+          margin-bottom: 2px;
+        }
+
+        .dropdown-user-email {
+          font-size: 0.8rem;
+          color: #9ca3af;
+        }
+
         .dropdown a,
-        .dropdown button,
-        .dropdown div {
+        .dropdown button {
           display: block;
           width: 100%;
-          padding: 12px 16px;
+          padding: 10px 12px;
           text-align: left;
           background: none;
           border: none;
-          font-size: 0.95rem;
+          font-size: 0.85rem;
           cursor: pointer;
           color: #1f2937;
           text-decoration: none;
+          border-bottom: 1px solid #e5e7eb;
         }
 
         .dropdown a:hover,
@@ -132,16 +151,10 @@ const Navbar = () => {
           background-color: #f3f4f6;
         }
 
-        .dropdown-email {
-          font-weight: 600;
-          cursor: default;
-          background-color: #f9fafb;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
         .logout-btn {
           color: #dc2626;
           font-weight: 500;
+          border-bottom: none !important;
         }
 
         .logout-btn:hover {
@@ -294,7 +307,11 @@ const Navbar = () => {
 
                 {isDropdownOpen && (
                   <div className="dropdown">
-                    <div className="dropdown-email">{user?.email}</div>
+                    <div className="dropdown-user-info">
+                      <div className="dropdown-user-name">{user?.fullName || "User"}</div>
+                      <div className="dropdown-user-email">{user?.email}</div>
+                    </div>
+                    <a href="/account">My Account</a>
                     <button className="logout-btn" onClick={handleLogout}>
                       Logout
                     </button>

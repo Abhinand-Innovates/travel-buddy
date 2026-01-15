@@ -104,7 +104,7 @@ const GuideNavbar = () => {
           position: absolute;
           right: 0;
           top: 45px;
-          width: 200px;
+          width: 180px;
           background: white;
           border: 1px solid #e5e7eb;
           box-shadow: 0 6px 15px rgba(0,0,0,0.1);
@@ -113,19 +113,38 @@ const GuideNavbar = () => {
           z-index: 2000;
         }
 
+        .guide-dropdown-user-info {
+          padding: 10px 12px;
+          background-color: #f9fafb;
+          border-bottom: 1px solid #e5e7eb;
+          cursor: default;
+        }
+
+        .guide-dropdown-user-name {
+          font-weight: 700;
+          font-size: 0.9rem;
+          color: #1f2937;
+          margin-bottom: 2px;
+        }
+
+        .guide-dropdown-user-email {
+          font-size: 0.8rem;
+          color: #9ca3af;
+        }
+
         .guide-dropdown a,
-        .guide-dropdown button,
-        .guide-dropdown div {
+        .guide-dropdown button {
           display: block;
           width: 100%;
-          padding: 12px 16px;
+          padding: 10px 12px;
           text-align: left;
           background: none;
           border: none;
-          font-size: 0.95rem;
+          font-size: 0.85rem;
           cursor: pointer;
           color: #1f2937;
           text-decoration: none;
+          border-bottom: 1px solid #e5e7eb;
         }
 
         .guide-dropdown a:hover,
@@ -133,16 +152,10 @@ const GuideNavbar = () => {
           background-color: #f3f4f6;
         }
 
-        .guide-dropdown-email {
-          font-weight: 600;
-          cursor: default;
-          background-color: #f9fafb;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
         .guide-logout-btn {
           color: #dc2626;
           font-weight: 500;
+          border-bottom: none !important;
         }
 
         .guide-logout-btn:hover {
@@ -281,7 +294,11 @@ const GuideNavbar = () => {
 
               {isDropdownOpen && (
                 <div className="guide-dropdown">
-                  <div className="guide-dropdown-email">{user?.email || 'user@example.com'}</div>
+                  <div className="guide-dropdown-user-info">
+                    <div className="guide-dropdown-user-name">{user?.fullName || "User"}</div>
+                    <div className="guide-dropdown-user-email">{user?.email}</div>
+                  </div>
+                  <a href="/guide/account">My Account</a>
                   <button className="guide-logout-btn" onClick={handleLogout}>
                     Logout
                   </button>
