@@ -224,14 +224,17 @@ const GuideSignup = () => {
       formDataUpload.append('aadhaarFront', aadhaarFront);
       formDataUpload.append('aadhaarBack', aadhaarBack);
 
-      const res = await fetch('http://localhost:5000/api/guide/upload-aadhaar', {
-        method: 'POST',
-        body: formDataUpload,
-      });
+      const [uploadRes] = await Promise.all([
+        fetch('http://localhost:5000/api/guide/upload-aadhaar', {
+          method: 'POST',
+          body: formDataUpload,
+        }),
+        sendOtp()
+      ]);
 
-      const data = await res.json();
+      const data = await uploadRes.json();
 
-      if (!res.ok) {
+      if (!uploadRes.ok) {
         showError(data.message);
         return;
       }
@@ -242,8 +245,6 @@ const GuideSignup = () => {
         aadhaarBackUrl: data.aadhaarBackUrl
       });
       setStep(4);
-      // Send OTP
-      await sendOtp();
     } catch (err) {
       showError('Failed to upload Aadhaar');
     } finally {
